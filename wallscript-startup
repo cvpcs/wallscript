@@ -1,0 +1,68 @@
+#!/bin/bash
+
+WALLSCRIPT="/usr/share/wallscript/wallscript.tcl"
+CONFIG_FILE="${HOME}/.wallscript.conf"
+
+IMG_FILE="/tmp/wallscript.img"
+LOG_FILE="/tmp/wallscript.log"
+FREQUENCY="300000"
+NSFW="false"
+BACKDROP_EXEC=""
+OVERRIDE=""
+
+# check for the config file
+if [ -e "${CONFIG_FILE}" ] ; then
+	# config exists, attempt to parse as an INI file
+	eval $(sed \
+		-e 's/[[:space:]]*\=[[:space:]]*/=/g' \
+		-e 's/;.*$//' \
+		-e 's/[[:space:]]*$//' \
+		-e 's/^[[:space:]]*//' \
+		-e "s/^\(.*\)=\([^\"']*\)$/\1=\"\2\"/" \
+		< "${CONFIG_FILE}")
+
+	if [ ! -z "${img_file}"      ] ; then IMG_FILE="${img_file}";           fi
+	if [ ! -z "${log_file}"      ] ; then LOG_FILE="${log_file}";           fi
+	if [ ! -z "${frequency}"     ] ; then FREQUENCY="${frequency}";         fi
+	if [ ! -z "${nsfw}"          ] ; then NSFW="${nsfw}";                   fi
+	if [ ! -z "${backdrop_exec}" ] ; then BACKDROP_EXEC="${backdrop_exec}"; fi
+	if [ ! -z "${override}"      ] ; then OVERRIDE="${override}";           fi
+fi
+
+echo "Using settings:"
+echo "  IMG_FILE      = \"${IMG_FILE}\""
+echo "  LOG_FILE      = \"${LOG_FILE}\""
+echo "  FREQUENCY     = \"${FREQUENCY}\""
+echo "  NSFW          = \"${NSFW}\""
+echo "  BACKDROP_EXEC = \"${BACKDROP_EXEC}\""
+echo "  OVERRIDE      = \"${OVERRIDE}\""
+
+if [ -z "${BACKDROP_EXEC}" ] ; then
+	echo "Please set the 'backdrop_exec' variable in your wallscript config file!"
+	exit 1
+fi
+
+if [ $# -gt 0 ] ; then
+	if [ ! -e "${OVERRIDE}" ] ; then
+		echo "Unable to locate desired override file.  Please set the 'override' variable"
+		echo "in your wallscript config file to a valid backdrop image."
+		exit 1
+	fi
+
+	echo "Overriding wallscript's current setting..."
+	"${WALLSCRIPT}" \
+		"${NSFW}" \
+		"${BACKDROP_EXEC}" \
+		"${OVERRIDE}" \
+		>> "${LOG_FILE}" \
+		2>&1
+else
+	echo "Starting wallscript..."
+	"${WALLSCRIPT}" \
+		"${NSFW}" \
+		"${BACKDROP_EXEC}" \
+		"${IMG_FILE}" \
+		"${FREQUENCY}" \
+		>> "${LOG_FILE}" \
+		2>&1
+fi

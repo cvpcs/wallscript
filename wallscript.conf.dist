@@ -1,0 +1,67 @@
+; Wallscript configuration file
+;
+; The wallscript configuration file is designed in the form of a standard
+; windows INI file.
+;
+
+; log_file
+;
+; This specifies where wallscript should log its messages.  Note: this
+; location must be writable by your user!
+;
+;log_file = /tmp/wallscript.log
+
+; img_file
+;
+; This specifies where wallscript should save the images it downloads.
+; Note: this location must be writable by your user!
+;
+;img_file = /tmp/wallscript.img
+
+; frequency
+;
+; This specifies how often wallscript should fetch a new wallpaper and
+; set it to your backdrop, specified in milliseconds.  For example, if you
+; would like a new wallpaper every 5 minutes, set this value to
+; 5 * 60 * 1000 = 300000
+;
+;frequency = 300000
+
+; nsfw
+;
+; By default, wallscript attempts to pull only those wallpapers that have
+; been tagged as "safe".  If you do not care what kind of wallpapers are
+; pulled, set this value to "true".
+;
+;nsfw = false
+
+; backdrop_exec
+;
+; This specifies the command to execute when setting the wallpaper.  Specify
+; %s to denote where the filename should be inserted into the command. This
+; value MUST be set in order for wallscript to function properly!
+;
+; Examples:
+;   Gnome using gconftool:
+;     gconftool -t string -s /desktop/gnome/background/picture_filename %s
+;   or:
+;     gconftool-2 -t string -s /desktop/gnome/background/picture_filename %s
+;
+;   XFCE4 using xfconf-query:
+;     xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitor0/image-path -s %s
+;
+;   Fluxbox/Openbox using pacman:
+;     pcmanfm --set-wallpaper %s
+;
+;backdrop_exec = 
+
+; override
+;
+; This specifies an image that should be used to rapidly replace the current
+; backdrop should wallscript-startup be called with an argument.  This is useful
+; especially if you enable 'nsfw = true', as you can then set up a hotkey
+; that will execute 'wallscript-startup override', which will essentially allow
+; you to rapidly replace your desktop wallpaper with a stock image should
+; anything undesirable show up from the internet.
+;
+;override = path_to_image
